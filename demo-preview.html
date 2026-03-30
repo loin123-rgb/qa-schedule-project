@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plato Workflow Demo Preview</title>
+    <style>
+      :root {
+        --bg: #f4efe7;
+        --panel: rgba(255, 251, 245, 0.9);
+        --panel-strong: #fff9f1;
+        --line: rgba(44, 41, 36, 0.12);
+        --ink: #2a2621;
+        --muted: #6d655c;
+        --accent: #bc5d2e;
+        --accent-deep: #8f3714;
+        --sage: #5e7d69;
+        --gold: #d4a53a;
+        --shadow: 0 24px 60px rgba(90, 61, 28, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(188, 93, 46, 0.18), transparent 28%),
+          radial-gradient(circle at right 20%, rgba(94, 125, 105, 0.22), transparent 24%),
+          linear-gradient(180deg, #f8f1e6 0%, #efe5d4 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(42, 38, 33, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(42, 38, 33, 0.02) 1px, transparent 1px);
+        background-size: 24px 24px;
+        pointer-events: none;
+      }
+
+      .page-shell {
+        width: min(1280px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 48px;
+      }
+
+      .hero {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 22px;
+        padding: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 28px;
+        background:
+          linear-gradient(135deg, rgba(255, 249, 241, 0.9), rgba(255, 247, 235, 0.72)),
+          linear-gradient(90deg, rgba(188, 93, 46, 0.12), rgba(94, 125, 105, 0.06));
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+      }
+
+      .eyebrow,
+      .section-kicker {
+        margin: 0 0 8px;
+        color: var(--accent-deep);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .hero h1,
+      .section-heading h2 {
+        margin: 0;
+        line-height: 1.05;
+      }
+
+      .hero h1 {
+        max-width: 10ch;
+        font-size: clamp(2.2rem, 4vw, 4.4rem);
+        font-weight: 800;
+      }
+
+      .hero-text {
+        max-width: 52ch;
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .mode-badge,
+      .status-badge {
+        display: inline-flex;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .mode-badge {
+        margin-bottom: 14px;
+        background: rgba(212, 165, 58, 0.18);
+        color: #7b5b11;
+      }
+
+      .status-badge {
+        background: rgba(94, 125, 105, 0.18);
+        color: #3f5a48;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 18px;
+      }
+
+      .panel {
+        border: 1px solid rgba(255, 255, 255, 0.62);
+        border-radius: 24px;
+        padding: 22px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .stats-panel,
+      .schedule-panel {
+        grid-column: span 12;
+      }
+
+      .form-panel,
+      .board-panel {
+        grid-column: span 6;
+      }
+
+      .stats-grid,
+      .team-columns,
+      .schedule-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
+
+      .team-columns {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .stat-card,
+      .team-card,
+      .schedule-card,
+      .notification-card,
+      .info-card {
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--panel-strong);
+      }
+
+      .stat-card,
+      .team-card,
+      .schedule-card,
+      .notification-card,
+      .info-card {
+        padding: 18px;
+      }
+
+      .stat-card strong {
+        display: block;
+        margin-top: 12px;
+        font-size: 2rem;
+      }
+
+      .stat-card span,
+      .member-pill small,
+      .schedule-meta,
+      .empty-state,
+      .info-card p {
+        color: var(--muted);
+      }
+
+      .stack-form {
+        display: grid;
+        gap: 14px;
+      }
+
+      .stack-form label {
+        display: grid;
+        gap: 7px;
+      }
+
+      .stack-form span {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        font: inherit;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(42, 38, 33, 0.13);
+        background: rgba(255, 252, 246, 0.96);
+        color: var(--ink);
+      }
+
+      textarea {
+        resize: vertical;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .primary-button {
+        color: #fff8f0;
+        background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+        box-shadow: 0 14px 24px rgba(143, 55, 20, 0.22);
+      }
+
+      .ghost-button,
+      .secondary-button {
+        color: var(--ink);
+        background: rgba(255, 249, 241, 0.75);
+        border: 1px solid rgba(42, 38, 33, 0.08);
+      }
+
+      .member-pill {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(244, 239, 231, 0.95);
+      }
+
+      .member-pill:last-child {
+        margin-bottom: 0;
+      }
+
+      .schedule-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: start;
+      }
+
+      .schedule-top h3,
+      .team-card h3 {
+        margin: 0 0 8px;
+      }
+
+      .schedule-meta {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 10px 0 0;
+        font-size: 0.92rem;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(94, 125, 105, 0.12);
+        color: var(--sage);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .tag.pending {
+        background: rgba(212, 165, 58, 0.16);
+        color: #886410;
+      }
+
+      .tag.completed {
+        background: rgba(94, 125, 105, 0.18);
+        color: #3f5a48;
+      }
+
+      .schedule-actions {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .calendar-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .calendar-toolbar h3 {
+        margin: 0;
+      }
+
+      .calendar-nav {
+        display: flex;
+        gap: 10px;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .calendar-weekday,
+      .calendar-day {
+        border-radius: 18px;
+      }
+
+      .calendar-weekday {
+        padding: 10px 12px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .calendar-day {
+        min-height: 132px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        background: var(--panel-strong);
+      }
+
+      .calendar-day.is-outside {
+        opacity: 0.45;
+      }
+
+      .calendar-day.is-today {
+        border-color: rgba(188, 93, 46, 0.48);
+        box-shadow: inset 0 0 0 1px rgba(188, 93, 46, 0.18);
+      }
+
+      .calendar-day-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .calendar-day-number {
+        font-weight: 800;
+      }
+
+      .calendar-count {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .calendar-items {
+        display: grid;
+        gap: 8px;
+      }
+
+      .calendar-item {
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: rgba(94, 125, 105, 0.1);
+        color: var(--ink);
+        font-size: 0.84rem;
+      }
+
+      .calendar-item.quality {
+        background: rgba(188, 93, 46, 0.12);
+      }
+
+      .calendar-item small {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+      }
+
+      .daily-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .daily-toolbar h3 {
+        margin: 0;
+      }
+
+      .daily-columns {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+      }
+
+      .daily-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--panel-strong);
+      }
+
+      .daily-card h3 {
+        margin: 0 0 12px;
+      }
+
+      .daily-pill {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        background: rgba(244, 239, 231, 0.95);
+      }
+
+      .daily-pill:last-child {
+        margin-bottom: 0;
+      }
+
+      .permission-note {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: rgba(188, 93, 46, 0.08);
+      }
+
+      .permission-note h3,
+      .permission-note p {
+        margin: 0 0 10px;
+      }
+
+      .permission-note p:last-child {
+        margin-bottom: 0;
+      }
+
+      .stack-inline {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .health-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        margin-left: 8px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .health-badge.normal {
+        background: rgba(94, 125, 105, 0.16);
+        color: #3f5a48;
+      }
+
+      .health-badge.overtime {
+        background: rgba(212, 165, 58, 0.18);
+        color: #886410;
+      }
+
+      .health-badge.overdue {
+        background: rgba(188, 93, 46, 0.18);
+        color: #8f3714;
+      }
+
+      .toast {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        max-width: 360px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        color: #fff8f0;
+        background: rgba(42, 38, 33, 0.92);
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+      }
+
+      @media (max-width: 960px) {
+        .hero,
+        .schedule-top,
+        .calendar-toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .stack-inline {
+          grid-template-columns: 1fr;
+        }
+
+        .form-panel,
+        .board-panel,
+        .schedule-panel,
+        .stats-panel {
+          grid-column: span 12;
+        }
+
+        .hero h1 {
+          max-width: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Plato Workflow Console</p>
+          <div class="mode-badge">Standalone Demo</div>
+          <h1>驗證組與品檢組的工作流程儀表板</h1>
+          <p class="hero-text">
+            這是本機展示版，不需要伺服器、不需要 Discord，也不需要網路。雙擊這個檔案就能直接預覽流程。
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="resetButton" class="ghost-button">重設假資料</button>
+          <button id="dispatchButton" class="primary-button">模擬派送提醒</button>
+        </div>
+      </header>
+
+      <main class="dashboard-grid">
+        <section class="panel stats-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Overview</p>
+            <h2>目前工作狀態</h2>
+          </div>
+          <div id="statsGrid" class="stats-grid"></div>
+        </section>
+
+        <section class="panel form-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Members</p>
+            <h2>新增人員</h2>
+          </div>
+          <form id="memberForm" class="stack-form">
+            <label>
+              <span>姓名</span>
+              <input name="name" type="text" placeholder="例如：王小明" required />
+            </label>
+            <label>
+              <span>部門</span>
+              <select name="teamId" id="memberTeamSelect" required></select>
+            </label>
+            <label>
+              <span>角色</span>
+              <input name="role" type="text" placeholder="例如：組長 / 組員" />
+            </label>
+            <label>
+              <span>Discord 使用者 ID</span>
+              <input name="discordUserId" type="text" placeholder="展示用，可留空" />
+            </label>
+            <button type="submit" class="primary-button">建立成員</button>
+          </form>
+        </section>
+
+        <section class="panel form-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Access</p>
+            <h2>行事曆修改權限</h2>
+          </div>
+          <div class="permission-note">
+            <h3>品保部眾人可共同維護</h3>
+            <p>部門行事曆由品保部共同維護，驗證組與品檢組都能新增、修改與補登排程。</p>
+            <p>品保經理可跨兩組查看全局時程，副理與組長可協助調整驗證與設備工作。</p>
+          </div>
+        </section>
+
+        <section class="panel form-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Schedules</p>
+            <h2>建立驗證排程</h2>
+          </div>
+          <form id="scheduleForm" class="stack-form">
+            <label>
+              <span>排程類型</span>
+              <select name="scheduleCategory" required>
+                <option value="product-validation">產品驗證時程</option>
+                <option value="equipment-schedule">設備時程排程</option>
+              </select>
+            </label>
+            <label>
+              <span>排程標題</span>
+              <input name="title" type="text" placeholder="例如：產品驗證時程 A-01" required />
+            </label>
+            <label>
+              <span>說明</span>
+              <textarea name="description" rows="3" placeholder="輸入工作內容與注意事項"></textarea>
+            </label>
+            <label>
+              <span>部門</span>
+              <select name="teamId" id="scheduleTeamSelect" required></select>
+            </label>
+            <label>
+              <span>負責人</span>
+              <select name="assigneeId" id="assigneeSelect">
+                <option value="">未指派</option>
+              </select>
+            </label>
+            <div class="stack-inline">
+              <label>
+                <span>啟動日期</span>
+                <input name="startAt" type="datetime-local" required />
+              </label>
+              <label>
+                <span>預計時間（小時）</span>
+                <input name="plannedHours" type="number" min="0.5" step="0.5" value="8" required />
+              </label>
+            </div>
+            <div class="stack-inline">
+              <label>
+                <span>結束時間</span>
+                <input name="endAt" type="datetime-local" required />
+              </label>
+              <label>
+                <span>提前提醒分鐘</span>
+                <input name="reminderMinutes" type="number" min="1" value="30" required />
+              </label>
+            </div>
+            <button type="submit" class="primary-button">建立排程</button>
+          </form>
+        </section>
+
+        <section class="panel board-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Management</p>
+            <h2>主管層</h2>
+          </div>
+          <div id="managementColumns" class="team-columns"></div>
+        </section>
+
+        <section class="panel board-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Roster</p>
+            <h2>部門成員</h2>
+          </div>
+          <div id="teamColumns" class="team-columns"></div>
+        </section>
+
+        <section class="panel board-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Demo</p>
+            <h2>展示說明</h2>
+          </div>
+          <div class="info-card">
+            <span class="status-badge">本機模擬</span>
+            <p>這頁面的資料都存在瀏覽器記憶體中，重新整理後會回到預設假資料。</p>
+            <p>適合先給主管或同事看流程，不需要部署、不需要資料庫、不需要 Discord Webhook。</p>
+          </div>
+        </section>
+
+        <section class="panel schedule-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Calendar</p>
+            <h2>排程行事曆</h2>
+          </div>
+          <div class="calendar-toolbar">
+            <h3 id="calendarTitle"></h3>
+            <div class="calendar-nav">
+              <button id="prevMonthButton" class="ghost-button">上個月</button>
+              <button id="todayButton" class="secondary-button">回到本月</button>
+              <button id="nextMonthButton" class="ghost-button">下個月</button>
+            </div>
+          </div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </section>
+
+        <section class="panel schedule-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Daily Status</p>
+            <h2>每日出差與請假名單</h2>
+          </div>
+          <div class="daily-toolbar">
+            <h3 id="dailyStatusTitle"></h3>
+            <input id="dailyStatusPicker" type="date" />
+          </div>
+          <div id="dailyStatusColumns" class="daily-columns"></div>
+        </section>
+
+        <section class="panel schedule-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Timeline</p>
+            <h2>待辦排程</h2>
+          </div>
+          <div id="scheduleList" class="schedule-list"></div>
+        </section>
+
+        <section class="panel schedule-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Notifications</p>
+            <h2>提醒模擬紀錄</h2>
+          </div>
+          <div id="notificationList" class="schedule-list"></div>
+        </section>
+      </main>
+
+      <div id="toast" class="toast" hidden></div>
+    </div>
+
+    <script>
+      const seedData = () => ({
+        teams: [
+          { id: "verification", name: "驗證組" },
+          { id: "quality", name: "品檢組" }
+        ],
+        members: [
+          {
+            id: "member_demo01",
+            name: "黃詩珊",
+            teamId: "quality",
+            role: "品保經理",
+            scope: "all-teams",
+            discordUserId: "demo-user-01"
+          },
+          {
+            id: "member_demo02",
+            name: "洪瑋志",
+            teamId: "quality",
+            role: "品保副理",
+            discordUserId: "demo-user-02"
+          },
+          {
+            id: "member_demo03",
+            name: "吳宗翰",
+            teamId: "verification",
+            role: "品保副理",
+            discordUserId: "demo-user-03"
+          },
+          {
+            id: "member_demo04",
+            name: "李育銘",
+            teamId: "quality",
+            role: "品檢組長",
+            discordUserId: "demo-user-04"
+          },
+          {
+            id: "member_demo05",
+            name: "蔡易儒",
+            teamId: "verification",
+            role: "驗證組組員",
+            discordUserId: "demo-user-05"
+          },
+          {
+            id: "member_demo06",
+            name: "張靜茹",
+            teamId: "verification",
+            role: "驗證組組員",
+            discordUserId: "demo-user-06"
+          },
+          {
+            id: "member_demo07",
+            name: "李育昇",
+            teamId: "verification",
+            role: "驗證組組員",
+            discordUserId: "demo-user-07"
+          },
+          {
+            id: "member_demo08",
+            name: "黃搏裕",
+            teamId: "verification",
+            role: "驗證組組員",
+            discordUserId: "demo-user-08"
+          },
+          {
+            id: "member_demo09",
+            name: "呂書齊",
+            teamId: "verification",
+            role: "驗證組組員",
+            discordUserId: "demo-user-09"
+          },
+          {
+            id: "member_demo10",
+            name: "陳昱安",
+            teamId: "verification",
+            role: "驗證組組員",
+            discordUserId: "demo-user-10"
+          },
+          {
+            id: "member_demo11",
+            name: "黃屏祥",
+            teamId: "quality",
+            role: "品檢組組員",
+            discordUserId: "demo-user-11"
+          },
+          {
+            id: "member_demo12",
+            name: "蘇建樺",
+            teamId: "quality",
+            role: "品檢組組員",
+            discordUserId: "demo-user-12"
+          },
+          {
+            id: "member_demo13",
+            name: "蘇嘉偉",
+            teamId: "quality",
+            role: "品檢組組員",
+            discordUserId: "demo-user-13"
+          },
+          {
+            id: "member_demo14",
+            name: "張家筠",
+            teamId: "quality",
+            role: "品檢組組員",
+            discordUserId: "demo-user-14"
+          },
+          {
+            id: "member_demo15",
+            name: "王紹宇",
+            teamId: "quality",
+            role: "品檢組組員",
+            discordUserId: "demo-user-15"
+          },
+          {
+            id: "member_demo16",
+            name: "吳淑娥",
+            teamId: "quality",
+            role: "文管",
+            discordUserId: "demo-user-16"
+          },
+          {
+            id: "member_demo17",
+            name: "陳詩涵",
+            teamId: "quality",
+            role: "品保助理",
+            discordUserId: "demo-user-17"
+          }
+        ],
+        schedules: [
+          {
+            id: "schedule_demo01",
+            scheduleCategory: "product-validation",
+            title: "產品驗證時程 A-01",
+            description: "確認今日匯入案件資料是否完整，缺件需回報。",
+            teamId: "verification",
+            assigneeId: "member_demo03",
+            startAt: "2026-03-31T09:00",
+            plannedHours: 6,
+            expectedEndAt: "2026-03-31T15:00",
+            endAt: "2026-03-31T15:30",
+            dueAt: "2026-03-31T15:30",
+            reminderMinutes: 60,
+            reminderAt: "2026-03-31T08:30",
+            status: "pending",
+            reminderSentAt: ""
+          },
+          {
+            id: "schedule_demo02",
+            scheduleCategory: "equipment-schedule",
+            title: "設備時程排程 B-02",
+            description: "針對昨天完成案件做抽樣覆核與紀錄。",
+            teamId: "quality",
+            assigneeId: "member_demo04",
+            startAt: "2026-03-30T08:00",
+            plannedHours: 8,
+            expectedEndAt: "2026-03-30T16:00",
+            endAt: "2026-03-30T16:30",
+            dueAt: "2026-03-30T16:30",
+            reminderMinutes: 30,
+            reminderAt: "2026-03-30T07:30",
+            status: "completed",
+            reminderSentAt: "2026-03-30T15:59"
+          }
+        ],
+        notificationLog: [
+          {
+            id: "notify_demo01",
+            scheduleId: "schedule_demo02",
+            channel: "discord-demo",
+            sentAt: "2026-03-30T15:59",
+            status: "mock-sent",
+            message: "Demo reminder delivered for sample schedule."
+          }
+        ],
+        dailyStatus: [
+          {
+            id: "status_demo01",
+            date: "2026-03-30",
+            type: "出差",
+            memberId: "member_demo02",
+            note: "供應商品質會議"
+          },
+          {
+            id: "status_demo02",
+            date: "2026-03-30",
+            type: "請假",
+            memberId: "member_demo05",
+            note: "特休"
+          },
+          {
+            id: "status_demo03",
+            date: "2026-03-30",
+            type: "請假",
+            memberId: "member_demo14",
+            note: "半日假"
+          }
+        ]
+      });
+
+      let state = seedData();
+
+      const memberForm = document.querySelector("#memberForm");
+      const scheduleForm = document.querySelector("#scheduleForm");
+      const memberTeamSelect = document.querySelector("#memberTeamSelect");
+      const scheduleTeamSelect = document.querySelector("#scheduleTeamSelect");
+      const assigneeSelect = document.querySelector("#assigneeSelect");
+      const statsGrid = document.querySelector("#statsGrid");
+      const managementColumns = document.querySelector("#managementColumns");
+      const teamColumns = document.querySelector("#teamColumns");
+      const calendarTitle = document.querySelector("#calendarTitle");
+      const calendarGrid = document.querySelector("#calendarGrid");
+      const dailyStatusTitle = document.querySelector("#dailyStatusTitle");
+      const dailyStatusPicker = document.querySelector("#dailyStatusPicker");
+      const dailyStatusColumns = document.querySelector("#dailyStatusColumns");
+      const scheduleList = document.querySelector("#scheduleList");
+      const notificationList = document.querySelector("#notificationList");
+      const toast = document.querySelector("#toast");
+      const calendarState = {
+        currentMonth: startOfMonth(new Date())
+      };
+      const dailyState = {
+        selectedDate: "2026-03-30"
+      };
+
+      document.querySelector("#resetButton").addEventListener("click", () => {
+        state = seedData();
+        render();
+        showToast("已重設為預設展示資料。");
+      });
+
+      document.querySelector("#dispatchButton").addEventListener("click", () => {
+        const pending = state.schedules.filter((item) => item.status === "pending" && !item.reminderSentAt);
+
+        for (const schedule of pending) {
+          schedule.reminderSentAt = new Date().toISOString().slice(0, 16);
+          state.notificationLog.unshift({
+            id: `notify_${Math.random().toString(16).slice(2, 8)}`,
+            scheduleId: schedule.id,
+            channel: "discord-demo",
+            sentAt: new Date().toISOString().slice(0, 16),
+            status: "mock-sent",
+            message: `模擬提醒已送出: ${schedule.title}`
+          });
+        }
+
+        render();
+        showToast(`已模擬派送 ${pending.length} 筆提醒。`);
+      });
+
+      document.querySelector("#prevMonthButton").addEventListener("click", () => {
+        calendarState.currentMonth = addMonths(calendarState.currentMonth, -1);
+        renderCalendar();
+      });
+
+      document.querySelector("#nextMonthButton").addEventListener("click", () => {
+        calendarState.currentMonth = addMonths(calendarState.currentMonth, 1);
+        renderCalendar();
+      });
+
+      document.querySelector("#todayButton").addEventListener("click", () => {
+        calendarState.currentMonth = startOfMonth(new Date());
+        renderCalendar();
+      });
+
+      dailyStatusPicker.addEventListener("change", () => {
+        dailyState.selectedDate = dailyStatusPicker.value;
+        renderDailyStatus();
+      });
+
+      memberForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const formData = new FormData(memberForm);
+        const payload = Object.fromEntries(formData.entries());
+
+        state.members.push({
+          id: `member_${Math.random().toString(16).slice(2, 8)}`,
+          name: payload.name,
+          teamId: payload.teamId,
+          role: payload.role || "",
+          discordUserId: payload.discordUserId || ""
+        });
+
+        memberForm.reset();
+        render();
+        showToast(`已建立成員 ${payload.name}。`);
+      });
+
+      scheduleForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const formData = new FormData(scheduleForm);
+        const payload = Object.fromEntries(formData.entries());
+        const startDate = new Date(payload.startAt);
+        const endDate = new Date(payload.endAt);
+        const plannedHours = Number(payload.plannedHours || 0);
+        const reminderMinutes = Number(payload.reminderMinutes || 30);
+        const expectedEndAt = new Date(startDate.getTime() + plannedHours * 60 * 60 * 1000);
+        const reminderAt = new Date(startDate.getTime() - reminderMinutes * 60 * 1000);
+
+        state.schedules.push({
+          id: `schedule_${Math.random().toString(16).slice(2, 8)}`,
+          scheduleCategory: payload.scheduleCategory,
+          title: payload.title,
+          description: payload.description || "",
+          teamId: payload.teamId,
+          assigneeId: payload.assigneeId || "",
+          startAt: payload.startAt,
+          plannedHours,
+          expectedEndAt: expectedEndAt.toISOString().slice(0, 16),
+          endAt: payload.endAt,
+          dueAt: endDate.toISOString().slice(0, 16),
+          reminderMinutes,
+          reminderAt: reminderAt.toISOString().slice(0, 16),
+          status: "pending",
+          reminderSentAt: ""
+        });
+
+        scheduleForm.reset();
+        render();
+        showToast(`已建立排程 ${payload.title}。`);
+      });
+
+      function render() {
+        renderTeamOptions();
+        renderStats();
+        renderManagement();
+        renderMembers();
+        renderCalendar();
+        renderDailyStatus();
+        renderSchedules();
+        renderNotifications();
+      }
+
+      function renderTeamOptions() {
+        const teamOptions = state.teams.map((team) => `<option value="${team.id}">${team.name}</option>`).join("");
+        memberTeamSelect.innerHTML = teamOptions;
+        scheduleTeamSelect.innerHTML = teamOptions;
+
+        assigneeSelect.innerHTML = ['<option value="">未指派</option>']
+          .concat(
+            state.members.map(
+              (member) =>
+                `<option value="${member.id}">${member.name} · ${resolveTeamName(member.teamId)}</option>`
+            )
+          )
+          .join("");
+      }
+
+      function renderStats() {
+        const pendingSchedules = state.schedules.filter((item) => item.status === "pending");
+        const completedSchedules = state.schedules.filter((item) => item.status === "completed");
+        const pendingReminders = pendingSchedules.filter((item) => !item.reminderSentAt);
+        const overtimeSchedules = state.schedules.filter((item) => getScheduleHealth(item).state !== "normal");
+
+        const cards = [
+          { label: "部門數量", value: state.teams.length, note: "目前固定為驗證組與品檢組" },
+          { label: "成員總數", value: state.members.length, note: "可持續新增人員與角色" },
+          { label: "待辦排程", value: pendingSchedules.length, note: "尚未完成的工作項目" },
+          { label: "已完成排程", value: completedSchedules.length, note: "已關閉的工作項目" },
+          { label: "超時 / 逾期", value: overtimeSchedules.length, note: "依預計工時自動判斷" },
+          { label: "待發提醒", value: pendingReminders.length, note: "尚未送出 Discord 提醒" },
+          { label: "模擬提醒紀錄", value: state.notificationLog.length, note: "目前只在本頁展示，不會真的外送" }
+        ];
+
+        statsGrid.innerHTML = cards
+          .map(
+            (card) => `
+              <article class="stat-card">
+                <span>${card.label}</span>
+                <strong>${card.value}</strong>
+                <span>${card.note}</span>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      function renderMembers() {
+        teamColumns.innerHTML = state.teams
+          .map((team) => {
+            const members = state.members.filter(
+              (member) => member.teamId === team.id && member.scope !== "all-teams"
+            );
+            const memberMarkup = members.length
+              ? members
+                  .map(
+                    (member) => `
+                      <div class="member-pill">
+                        <div>
+                          <strong>${member.name}</strong>
+                          <div><small>${member.role || "未設定角色"}</small></div>
+                        </div>
+                        <small>${member.discordUserId || "未綁定 Discord"}</small>
+                      </div>
+                    `
+                  )
+                  .join("")
+              : '<p class="empty-state">這個部門目前還沒有成員。</p>';
+
+            return `
+              <article class="team-card">
+                <h3>${team.name}</h3>
+                ${memberMarkup}
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      function renderManagement() {
+        const managers = state.members.filter((member) => member.scope === "all-teams");
+
+        if (managers.length === 0) {
+          managementColumns.innerHTML = '<p class="empty-state">目前沒有跨部門主管資料。</p>';
+          return;
+        }
+
+        managementColumns.innerHTML = managers
+          .map(
+            (manager) => `
+              <article class="team-card">
+                <h3>${manager.name}</h3>
+                <div class="member-pill">
+                  <div>
+                    <strong>${manager.role}</strong>
+                    <div><small>管理範圍：驗證組、品檢組</small></div>
+                  </div>
+                  <small>${manager.discordUserId || "未綁定 Discord"}</small>
+                </div>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      function renderSchedules() {
+        if (state.schedules.length === 0) {
+          scheduleList.innerHTML = '<p class="empty-state">目前還沒有排程，先新增一筆工作看看。</p>';
+          return;
+        }
+
+        const ordered = [...state.schedules].sort((a, b) => new Date(a.dueAt) - new Date(b.dueAt));
+        scheduleList.innerHTML = ordered
+          .map((schedule) => {
+            const assignee = state.members.find((member) => member.id === schedule.assigneeId);
+            const reminderText = schedule.reminderSentAt ? "已送出提醒" : "尚未送出提醒";
+            const health = getScheduleHealth(schedule);
+            const completeButton =
+              schedule.status === "pending"
+                ? `<button class="secondary-button" data-complete-id="${schedule.id}">標記完成</button>`
+                : "";
+
+            return `
+              <article class="schedule-card">
+                <div class="schedule-top">
+                  <div>
+                    <h3>${schedule.title}</h3>
+                    <span class="tag ${schedule.status}">${schedule.status === "pending" ? "進行中" : "已完成"}</span>
+                    <span class="health-badge ${health.state}">${health.label}</span>
+                    <p>${schedule.description || "沒有額外說明。"}</p>
+                    <div class="schedule-meta">
+                      <span>類型：${resolveScheduleCategory(schedule.scheduleCategory)}</span>
+                      <span>部門：${resolveTeamName(schedule.teamId)}</span>
+                      <span>負責人：${assignee ? assignee.name : "未指派"}</span>
+                      <span>啟動：${formatDate(schedule.startAt || schedule.dueAt)}</span>
+                      <span>預計：${schedule.plannedHours || 0} 小時</span>
+                      <span>預估完成：${formatDate(schedule.expectedEndAt || schedule.dueAt)}</span>
+                      <span>結束：${formatDate(schedule.endAt || schedule.dueAt)}</span>
+                      <span>提醒：${formatDate(schedule.reminderAt)}</span>
+                      <span>${reminderText}</span>
+                      <span>${health.detail}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="schedule-actions">
+                  ${completeButton}
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+
+        document.querySelectorAll("[data-complete-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const target = state.schedules.find((item) => item.id === button.dataset.completeId);
+            if (!target) {
+              return;
+            }
+
+            target.status = "completed";
+            render();
+            showToast(`已完成排程 ${target.title}。`);
+          });
+        });
+      }
+
+      function renderDailyStatus() {
+        const selectedDate = dailyState.selectedDate || toDateKey(new Date());
+        dailyStatusPicker.value = selectedDate;
+        dailyStatusTitle.textContent = `${formatDateOnly(selectedDate)} 出差 / 請假總覽`;
+
+        const statuses = (state.dailyStatus || []).filter((item) => item.date === selectedDate);
+        const grouped = [
+          { title: "出差名單", type: "出差" },
+          { title: "請假名單", type: "請假" }
+        ];
+
+        dailyStatusColumns.innerHTML = grouped
+          .map((group) => {
+            const items = statuses.filter((item) => item.type === group.type);
+            const markup = items.length
+              ? items
+                  .map((item) => {
+                    const member = state.members.find((entry) => entry.id === item.memberId);
+                    return `
+                      <div class="daily-pill">
+                        <div>
+                          <strong>${member ? member.name : item.memberId}</strong>
+                          <div><small>${member ? member.role : "未設定職稱"}</small></div>
+                        </div>
+                        <small>${item.note || "未填寫說明"}</small>
+                      </div>
+                    `;
+                  })
+                  .join("")
+              : '<p class="empty-state">當天沒有名單。</p>';
+
+            return `
+              <article class="daily-card">
+                <h3>${group.title}</h3>
+                ${markup}
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      function renderCalendar() {
+        const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+        const visibleMonth = calendarState.currentMonth;
+        const year = visibleMonth.getFullYear();
+        const month = visibleMonth.getMonth();
+        const monthStart = new Date(year, month, 1);
+        const monthEnd = new Date(year, month + 1, 0);
+        const gridStart = new Date(monthStart);
+        gridStart.setDate(monthStart.getDate() - monthStart.getDay());
+        const gridEnd = new Date(monthEnd);
+        gridEnd.setDate(monthEnd.getDate() + (6 - monthEnd.getDay()));
+        const todayKey = toDateKey(new Date());
+        const items = [];
+
+        calendarTitle.textContent = new Intl.DateTimeFormat("zh-TW", {
+          year: "numeric",
+          month: "long"
+        }).format(visibleMonth);
+
+        for (const weekday of weekdays) {
+          items.push(`<div class="calendar-weekday">${weekday}</div>`);
+        }
+
+        for (let day = new Date(gridStart); day <= gridEnd; day.setDate(day.getDate() + 1)) {
+          const dayKey = toDateKey(day);
+          const daySchedules = state.schedules
+            .filter((schedule) => toDateKey(new Date(schedule.dueAt)) === dayKey)
+            .sort((a, b) => new Date(a.dueAt) - new Date(b.dueAt));
+
+          const isOutside = day.getMonth() !== month;
+          const isToday = dayKey === todayKey;
+          const dayClasses = ["calendar-day"];
+
+          if (isOutside) {
+            dayClasses.push("is-outside");
+          }
+
+          if (isToday) {
+            dayClasses.push("is-today");
+          }
+
+          const scheduleMarkup = daySchedules.length
+            ? daySchedules
+                .slice(0, 3)
+                .map((schedule) => {
+                  const teamClass = schedule.teamId === "quality" ? "quality" : "verification";
+                  return `
+                    <div class="calendar-item ${teamClass}">
+                      ${schedule.title}
+                      <small>${resolveTeamName(schedule.teamId)} · ${formatTime(schedule.startAt || schedule.dueAt)}</small>
+                    </div>
+                  `;
+                })
+                .join("")
+            : '<div class="calendar-count">無排程</div>';
+
+          const overflowText =
+            daySchedules.length > 3
+              ? `<div class="calendar-count">另有 ${daySchedules.length - 3} 筆排程</div>`
+              : "";
+
+          items.push(`
+            <article class="${dayClasses.join(" ")}">
+              <div class="calendar-day-head">
+                <span class="calendar-day-number">${day.getDate()}</span>
+                <span class="calendar-count">${daySchedules.length} 筆</span>
+              </div>
+              <div class="calendar-items">
+                ${scheduleMarkup}
+                ${overflowText}
+              </div>
+            </article>
+          `);
+        }
+
+        calendarGrid.innerHTML = items.join("");
+      }
+
+      function renderNotifications() {
+        if (state.notificationLog.length === 0) {
+          notificationList.innerHTML = '<p class="empty-state">目前還沒有提醒紀錄，按一次「模擬派送提醒」就會看到結果。</p>';
+          return;
+        }
+
+        notificationList.innerHTML = state.notificationLog
+          .map((item) => {
+            const schedule = state.schedules.find((entry) => entry.id === item.scheduleId);
+            return `
+              <article class="notification-card">
+                <div class="schedule-top">
+                  <div>
+                    <h3>${schedule ? schedule.title : item.scheduleId}</h3>
+                    <span class="tag pending">${item.status}</span>
+                    <div class="schedule-meta">
+                      <span>管道：${item.channel}</span>
+                      <span>時間：${formatDate(item.sentAt)}</span>
+                    </div>
+                    <p>${item.message}</p>
+                  </div>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      function resolveTeamName(teamId) {
+        const team = state.teams.find((item) => item.id === teamId);
+        return team ? team.name : teamId;
+      }
+
+      function resolveScheduleCategory(value) {
+        if (value === "equipment-schedule") {
+          return "設備時程排程";
+        }
+
+        return "產品驗證時程";
+      }
+
+      function getScheduleHealth(schedule) {
+        const expected = new Date(schedule.expectedEndAt || schedule.dueAt);
+        const end = new Date(schedule.endAt || schedule.dueAt);
+        const diffMinutes = Math.round((end.getTime() - expected.getTime()) / 60000);
+
+        if (diffMinutes > 0) {
+          return {
+            state: "overtime",
+            label: "超時",
+            detail: `超時 ${formatDuration(diffMinutes)}`
+          };
+        }
+
+        if (schedule.status === "pending" && Date.now() > expected.getTime()) {
+          const lateMinutes = Math.round((Date.now() - expected.getTime()) / 60000);
+          return {
+            state: "overdue",
+            label: "逾期",
+            detail: `逾期 ${formatDuration(lateMinutes)}`
+          };
+        }
+
+        return {
+          state: "normal",
+          label: "正常",
+          detail: "時程正常"
+        };
+      }
+
+      function formatDate(value) {
+        return new Intl.DateTimeFormat("zh-TW", {
+          dateStyle: "medium",
+          timeStyle: "short"
+        }).format(new Date(value));
+      }
+
+      function formatTime(value) {
+        return new Intl.DateTimeFormat("zh-TW", {
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(new Date(value));
+      }
+
+      function formatDateOnly(value) {
+        return new Intl.DateTimeFormat("zh-TW", {
+          dateStyle: "full"
+        }).format(new Date(value));
+      }
+
+      function formatDuration(minutes) {
+        const safeMinutes = Math.abs(minutes);
+        const hours = Math.floor(safeMinutes / 60);
+        const restMinutes = safeMinutes % 60;
+
+        if (hours === 0) {
+          return `${restMinutes} 分鐘`;
+        }
+
+        if (restMinutes === 0) {
+          return `${hours} 小時`;
+        }
+
+        return `${hours} 小時 ${restMinutes} 分鐘`;
+      }
+
+      function startOfMonth(date) {
+        return new Date(date.getFullYear(), date.getMonth(), 1);
+      }
+
+      function addMonths(date, count) {
+        return new Date(date.getFullYear(), date.getMonth() + count, 1);
+      }
+
+      function toDateKey(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+          date.getDate()
+        ).padStart(2, "0")}`;
+      }
+
+      function showToast(message) {
+        toast.hidden = false;
+        toast.textContent = message;
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => {
+          toast.hidden = true;
+        }, 2600);
+      }
+
+      render();
+    </script>
+  </body>
+</html>

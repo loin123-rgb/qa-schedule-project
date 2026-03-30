@@ -1,0 +1,23 @@
+{
+  "name": "plato-workflow-discord",
+  "version": "0.1.0",
+  "description": "Workflow management starter project with Discord reminders for verification and QA teams.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "notify": "node src/server.js --dispatch-reminders"
+  },
+  "keywords": [
+    "workflow",
+    "discord",
+    "scheduler",
+    "plato"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.58.2",
+    "pptxgenjs": "^4.0.1"
+  }
+}

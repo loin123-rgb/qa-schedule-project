@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plato Workflow Console</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Plato Workflow Console</p>
+          <div id="modeBadge" class="mode-badge">Demo Mode</div>
+          <h1>驗證組與品檢組的工作流程儀表板</h1>
+          <p class="hero-text">
+            集中管理成員、排程與 Discord 提醒，先用模擬版把整體節奏跑起來。
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="refreshButton" class="ghost-button">重新整理資料</button>
+          <button id="dispatchButton" class="primary-button">手動派送提醒</button>
+        </div>
+      </header>
+
+      <main class="dashboard-grid">
+        <section class="panel stats-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Overview</p>
+            <h2>目前工作狀態</h2>
+          </div>
+          <div id="statsGrid" class="stats-grid"></div>
+        </section>
+
+        <section class="panel form-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Members</p>
+            <h2>新增人員</h2>
+          </div>
+          <form id="memberForm" class="stack-form">
+            <label>
+              <span>姓名</span>
+              <input name="name" type="text" placeholder="例如：王小明" required />
+            </label>
+            <label>
+              <span>部門</span>
+              <select name="teamId" id="memberTeamSelect" required></select>
+            </label>
+            <label>
+              <span>角色</span>
+              <input name="role" type="text" placeholder="例如：組長 / 組員" />
+            </label>
+            <label>
+              <span>Discord 使用者 ID</span>
+              <input name="discordUserId" type="text" placeholder="可先留空" />
+            </label>
+            <button type="submit" class="primary-button">建立成員</button>
+          </form>
+        </section>
+
+        <section class="panel form-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Schedules</p>
+            <h2>新增排程</h2>
+          </div>
+          <form id="scheduleForm" class="stack-form">
+            <label>
+              <span>任務標題</span>
+              <input name="title" type="text" placeholder="例如：批次資料驗證" required />
+            </label>
+            <label>
+              <span>說明</span>
+              <textarea name="description" rows="3" placeholder="輸入工作內容與注意事項"></textarea>
+            </label>
+            <label>
+              <span>部門</span>
+              <select name="teamId" id="scheduleTeamSelect" required></select>
+            </label>
+            <label>
+              <span>負責人</span>
+              <select name="assigneeId" id="assigneeSelect">
+                <option value="">未指派</option>
+              </select>
+            </label>
+            <label>
+              <span>截止時間</span>
+              <input name="dueAt" type="datetime-local" required />
+            </label>
+            <label>
+              <span>提前提醒分鐘</span>
+              <input name="reminderMinutes" type="number" min="1" value="30" required />
+            </label>
+            <button type="submit" class="primary-button">建立排程</button>
+          </form>
+        </section>
+
+        <section class="panel board-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Roster</p>
+            <h2>部門成員</h2>
+          </div>
+          <div id="teamColumns" class="team-columns"></div>
+        </section>
+
+        <section class="panel board-panel schedule-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Timeline</p>
+            <h2>待辦排程</h2>
+          </div>
+          <div id="scheduleList" class="schedule-list"></div>
+        </section>
+
+        <section class="panel schedule-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Notifications</p>
+            <h2>提醒模擬紀錄</h2>
+          </div>
+          <div id="notificationList" class="schedule-list"></div>
+        </section>
+      </main>
+
+      <div id="toast" class="toast" hidden></div>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

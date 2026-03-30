@@ -1,0 +1,190 @@
+{
+  "teams": [
+    {
+      "id": "verification",
+      "name": "驗證組"
+    },
+    {
+      "id": "quality",
+      "name": "品檢組"
+    }
+  ],
+  "members": [
+    {
+      "id": "member_demo01",
+      "name": "黃詩珊",
+      "teamId": "quality",
+      "role": "品保經理",
+      "scope": "all-teams",
+      "discordUserId": "demo-user-01",
+      "createdAt": "2026-03-30T01:00:00.000Z"
+    },
+    {
+      "id": "member_demo02",
+      "name": "洪瑋志",
+      "teamId": "quality",
+      "role": "品保副理",
+      "discordUserId": "demo-user-02",
+      "createdAt": "2026-03-30T01:05:00.000Z"
+    },
+    {
+      "id": "member_demo03",
+      "name": "吳宗翰",
+      "teamId": "verification",
+      "role": "品保副理",
+      "discordUserId": "demo-user-03",
+      "createdAt": "2026-03-30T01:10:00.000Z"
+    },
+    {
+      "id": "member_demo04",
+      "name": "李育銘",
+      "teamId": "quality",
+      "role": "品檢組長",
+      "discordUserId": "demo-user-04",
+      "createdAt": "2026-03-30T01:15:00.000Z"
+    },
+    {
+      "id": "member_demo05",
+      "name": "蔡易儒",
+      "teamId": "verification",
+      "role": "驗證組組員",
+      "discordUserId": "demo-user-05",
+      "createdAt": "2026-03-30T01:20:00.000Z"
+    },
+    {
+      "id": "member_demo06",
+      "name": "張靜茹",
+      "teamId": "verification",
+      "role": "驗證組組員",
+      "discordUserId": "demo-user-06",
+      "createdAt": "2026-03-30T01:21:00.000Z"
+    },
+    {
+      "id": "member_demo07",
+      "name": "李育昇",
+      "teamId": "verification",
+      "role": "驗證組組員",
+      "discordUserId": "demo-user-07",
+      "createdAt": "2026-03-30T01:22:00.000Z"
+    },
+    {
+      "id": "member_demo08",
+      "name": "黃搏裕",
+      "teamId": "verification",
+      "role": "驗證組組員",
+      "discordUserId": "demo-user-08",
+      "createdAt": "2026-03-30T01:23:00.000Z"
+    },
+    {
+      "id": "member_demo09",
+      "name": "呂書齊",
+      "teamId": "verification",
+      "role": "驗證組組員",
+      "discordUserId": "demo-user-09",
+      "createdAt": "2026-03-30T01:24:00.000Z"
+    },
+    {
+      "id": "member_demo10",
+      "name": "陳昱安",
+      "teamId": "verification",
+      "role": "驗證組組員",
+      "discordUserId": "demo-user-10",
+      "createdAt": "2026-03-30T01:25:00.000Z"
+    },
+    {
+      "id": "member_demo11",
+      "name": "黃屏祥",
+      "teamId": "quality",
+      "role": "品檢組組員",
+      "discordUserId": "demo-user-11",
+      "createdAt": "2026-03-30T01:26:00.000Z"
+    },
+    {
+      "id": "member_demo12",
+      "name": "蘇建樺",
+      "teamId": "quality",
+      "role": "品檢組組員",
+      "discordUserId": "demo-user-12",
+      "createdAt": "2026-03-30T01:27:00.000Z"
+    },
+    {
+      "id": "member_demo13",
+      "name": "蘇嘉偉",
+      "teamId": "quality",
+      "role": "品檢組組員",
+      "discordUserId": "demo-user-13",
+      "createdAt": "2026-03-30T01:28:00.000Z"
+    },
+    {
+      "id": "member_demo14",
+      "name": "張家筠",
+      "teamId": "quality",
+      "role": "品檢組組員",
+      "discordUserId": "demo-user-14",
+      "createdAt": "2026-03-30T01:29:00.000Z"
+    },
+    {
+      "id": "member_demo15",
+      "name": "王紹宇",
+      "teamId": "quality",
+      "role": "品檢組組員",
+      "discordUserId": "demo-user-15",
+      "createdAt": "2026-03-30T01:30:00.000Z"
+    },
+    {
+      "id": "member_demo16",
+      "name": "吳淑娥",
+      "teamId": "quality",
+      "role": "文管",
+      "discordUserId": "demo-user-16",
+      "createdAt": "2026-03-30T01:31:00.000Z"
+    },
+    {
+      "id": "member_demo17",
+      "name": "陳詩涵",
+      "teamId": "quality",
+      "role": "品保助理",
+      "discordUserId": "demo-user-17",
+      "createdAt": "2026-03-30T01:32:00.000Z"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "schedule_demo01",
+      "title": "批次資料驗證",
+      "description": "確認今日匯入案件資料是否完整，缺件需回報。",
+      "teamId": "verification",
+      "assigneeId": "member_demo03",
+      "dueAt": "2026-03-31T01:00:00.000Z",
+      "reminderMinutes": 60,
+      "reminderAt": "2026-03-31T00:00:00.000Z",
+      "status": "pending",
+      "reminderSentAt": "",
+      "createdAt": "2026-03-30T01:15:00.000Z"
+    },
+    {
+      "id": "schedule_demo02",
+      "title": "抽樣品檢覆核",
+      "description": "針對昨天完成案件做抽樣覆核與紀錄。",
+      "teamId": "quality",
+      "assigneeId": "member_demo04",
+      "dueAt": "2026-03-30T08:30:00.000Z",
+      "reminderMinutes": 30,
+      "reminderAt": "2026-03-30T08:00:00.000Z",
+      "status": "completed",
+      "reminderSentAt": "2026-03-30T07:59:00.000Z",
+      "createdAt": "2026-03-30T01:20:00.000Z",
+      "completedAt": "2026-03-30T08:20:00.000Z"
+    }
+  ],
+  "notificationLog": [
+    {
+      "id": "notify_demo01",
+      "scheduleId": "schedule_demo02",
+      "channel": "discord-demo",
+      "sentAt": "2026-03-30T07:59:00.000Z",
+      "status": "mock-sent",
+      "message": "Demo reminder delivered for sample schedule."
+    }
+  ]
+}

@@ -1,0 +1,361 @@
+:root {
+  --bg: #f4efe7;
+  --panel: rgba(255, 251, 245, 0.86);
+  --panel-strong: #fff9f1;
+  --line: rgba(44, 41, 36, 0.12);
+  --ink: #2a2621;
+  --muted: #6d655c;
+  --accent: #bc5d2e;
+  --accent-deep: #8f3714;
+  --sage: #5e7d69;
+  --gold: #d4a53a;
+  --shadow: 0 24px 60px rgba(90, 61, 28, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(188, 93, 46, 0.18), transparent 28%),
+    radial-gradient(circle at right 20%, rgba(94, 125, 105, 0.22), transparent 24%),
+    linear-gradient(180deg, #f8f1e6 0%, #efe5d4 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(42, 38, 33, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 38, 33, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.page-shell {
+  width: min(1280px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 48px;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: end;
+  margin-bottom: 22px;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 249, 241, 0.9), rgba(255, 247, 235, 0.72)),
+    linear-gradient(90deg, rgba(188, 93, 46, 0.12), rgba(94, 125, 105, 0.06));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.eyebrow,
+.section-kicker {
+  margin: 0 0 8px;
+  color: var(--accent-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hero h1,
+.section-heading h2 {
+  margin: 0;
+  line-height: 1.05;
+}
+
+.hero h1 {
+  max-width: 10ch;
+  font-size: clamp(2.2rem, 4vw, 4.4rem);
+  font-weight: 800;
+}
+
+.hero-text {
+  max-width: 52ch;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mode-badge {
+  display: inline-flex;
+  margin-bottom: 14px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(212, 165, 58, 0.18);
+  color: #7b5b11;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 18px;
+}
+
+.panel {
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 24px;
+  padding: 22px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.stats-panel {
+  grid-column: span 12;
+}
+
+.form-panel,
+.board-panel {
+  grid-column: span 6;
+}
+
+.schedule-panel {
+  grid-column: span 12;
+}
+
+.stats-grid,
+.team-columns {
+  display: grid;
+  gap: 14px;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.team-columns {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.stat-card,
+.team-card,
+.schedule-card,
+.notification-card {
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+}
+
+.stat-card {
+  padding: 18px;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 2rem;
+}
+
+.stat-card span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.stack-form {
+  display: grid;
+  gap: 14px;
+}
+
+.stack-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.stack-form span {
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(42, 38, 33, 0.13);
+  background: rgba(255, 252, 246, 0.96);
+  color: var(--ink);
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button {
+  color: #fff8f0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  box-shadow: 0 14px 24px rgba(143, 55, 20, 0.22);
+}
+
+.ghost-button {
+  color: var(--ink);
+  background: rgba(255, 249, 241, 0.75);
+  border: 1px solid rgba(42, 38, 33, 0.08);
+}
+
+.team-card {
+  padding: 18px;
+}
+
+.team-card h3 {
+  margin: 0 0 14px;
+}
+
+.member-pill {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(244, 239, 231, 0.95);
+}
+
+.member-pill:last-child {
+  margin-bottom: 0;
+}
+
+.member-pill small,
+.schedule-meta,
+.empty-state {
+  color: var(--muted);
+}
+
+.schedule-list {
+  display: grid;
+  gap: 14px;
+}
+
+.schedule-card {
+  padding: 18px;
+}
+
+.notification-card {
+  padding: 16px 18px;
+}
+
+.schedule-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.schedule-top h3 {
+  margin: 0 0 8px;
+}
+
+.schedule-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0 0;
+  font-size: 0.92rem;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(94, 125, 105, 0.12);
+  color: var(--sage);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.tag.pending {
+  background: rgba(212, 165, 58, 0.16);
+  color: #886410;
+}
+
+.tag.completed {
+  background: rgba(94, 125, 105, 0.18);
+  color: #3f5a48;
+}
+
+.schedule-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.secondary-button {
+  color: var(--ink);
+  background: rgba(94, 125, 105, 0.1);
+}
+
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  max-width: 360px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  color: #fff8f0;
+  background: rgba(42, 38, 33, 0.92);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 960px) {
+  .hero,
+  .schedule-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-panel,
+  .board-panel,
+  .schedule-panel,
+  .stats-panel {
+    grid-column: span 12;
+  }
+
+  .hero h1 {
+    max-width: none;
+  }
+}
